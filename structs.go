@@ -1,6 +1,6 @@
 package coefontcloud
 
-type CoeFontParameter struct {
+type coeFontParameter struct {
 	CoeFont      string
 	Text         string
 	Accesskey    string
