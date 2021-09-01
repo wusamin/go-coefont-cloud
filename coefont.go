@@ -123,7 +123,7 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 		return err
 	}
 
-	out, err := os.Create("filename.wav")
+	out, err := os.Create(filename)
 
 	if err != nil {
 		return err
