@@ -1,3 +1,3 @@
-module github.com/wusamin/coefont-cloud
+module github.com/wusamin/go-coefont-cloud
 
 go 1.16
