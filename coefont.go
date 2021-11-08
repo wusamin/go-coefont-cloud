@@ -12,9 +12,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
-const URL = "https://api.coefont.cloud/text2speech"
+const URL = "https://api.coefont.cloud/v1/text2speech"
 
 func NewParam() *coeFontParameter {
 	ret := coeFontParameter{}
@@ -55,14 +57,8 @@ func CallCoeFont(p *coeFontParameter) ([]byte, error) {
 
 	reqBody := CoeFontReqestBody{}
 
-	reqBody.Accesskey = p.Accesskey
 	reqBody.CoeFont = p.CoeFont
 	reqBody.Text = p.Text
-
-	mac := hmac.New(sha256.New, []byte(p.ClientSecret))
-	mac.Write([]byte(p.Text))
-
-	reqBody.Signature = hex.EncodeToString(mac.Sum(nil))
 	reqBody.Speed = p.Speed
 	reqBody.Pitch = p.Pitch
 	reqBody.Kuten = p.Kuten
@@ -70,15 +66,19 @@ func CallCoeFont(p *coeFontParameter) ([]byte, error) {
 	reqBody.Volume = p.Volume
 	reqBody.Intonation = p.Intonation
 
-	jsonned, err := json.Marshal(&reqBody)
+	m := map[string]interface{}{}
+	m["coefont"] = p.CoeFont
+	m["text"] = p.Text
+
+	jsonned, err := json.Marshal(&m)
 
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println(string(jsonned))
+	now := time.Now()
 
-	b, err := sendRequest(jsonned)
+	b, err := sendRequest(jsonned, &now, p.ClientSecret, p.Accesskey)
 
 	if err != nil {
 		return nil, err
@@ -94,14 +94,8 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 
 	reqBody := CoeFontReqestBody{}
 
-	reqBody.Accesskey = p.Accesskey
 	reqBody.CoeFont = p.CoeFont
 	reqBody.Text = p.Text
-
-	mac := hmac.New(sha256.New, []byte(p.ClientSecret))
-	mac.Write([]byte(p.Text))
-
-	reqBody.Signature = hex.EncodeToString(mac.Sum(nil))
 	reqBody.Speed = p.Speed
 	reqBody.Pitch = p.Pitch
 	reqBody.Kuten = p.Kuten
@@ -109,15 +103,21 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 	reqBody.Volume = p.Volume
 	reqBody.Intonation = p.Intonation
 
-	jsonned, err := json.Marshal(&reqBody)
+	m := map[string]interface{}{}
+	m["coefont"] = p.CoeFont
+	m["text"] = p.Text
+
+	jsonned, err := json.Marshal(&m)
 
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(string(jsonned))
+	now := time.Now()
+	fmt.Println(now.Unix())
+	fmt.Println(now.In(time.UTC).Unix())
 
-	b, err := sendRequest(jsonned)
+	b, err := sendRequest(jsonned, &now, p.ClientSecret, p.Accesskey)
 
 	if err != nil {
 		return err
@@ -136,12 +136,22 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 	return nil
 }
 
-func sendRequest(jsonBytes []byte) ([]byte, error) {
-	req, err := http.NewRequest("POST", URL, bytes.NewReader(jsonBytes))
+func sendRequest(jsonBytes []byte, date *time.Time, secret string, accesskey string) ([]byte, error) {
+	a := jsonBytes
+
+	req, err := http.NewRequest("POST", URL, bytes.NewReader(a))
 
 	if err != nil {
 		return nil, err
 	}
+
+	mac := hmac.New(sha256.New, []byte(secret))
+	mac.Write([]byte(strconv.FormatInt(date.Unix(), 10) + string(a)))
+
+	req.Header.Set("X-Coefont-Date", strconv.FormatInt(date.Unix(), 10))
+	req.Header.Set("X-Coefont-Content", hex.EncodeToString(mac.Sum(nil)))
+	req.Header.Set("Authorization", accesskey)
+	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 
@@ -172,6 +182,10 @@ func sendRequest(jsonBytes []byte) ([]byte, error) {
 	defer res2.Body.Close()
 
 	resBody, err := ioutil.ReadAll(res2.Body)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return resBody, nil
 }

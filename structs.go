@@ -16,8 +16,6 @@ type coeFontParameter struct {
 type CoeFontReqestBody struct {
 	CoeFont    string  `json:"coefont"`
 	Text       string  `json:"text"`
-	Accesskey  string  `json:"accesskey"`
-	Signature  string  `json:"signature"`
 	Speed      float32 `json:"speed"`      // 0.1 to 10. Default is 1.0.
 	Pitch      int16   `json:"pitch"`      // -3000 to 3000. Default is 0.
 	Kuten      float32 `json:"kuten"`      // 0 to 5. Default is 0.7.
