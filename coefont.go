@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -114,8 +113,6 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 	}
 
 	now := time.Now()
-	fmt.Println(now.Unix())
-	fmt.Println(now.In(time.UTC).Unix())
 
 	b, err := sendRequest(jsonned, &now, p.ClientSecret, p.Accesskey)
 
