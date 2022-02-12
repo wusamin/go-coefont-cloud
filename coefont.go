@@ -64,12 +64,9 @@ func CallCoeFont(p *coeFontParameter) ([]byte, error) {
 	reqBody.Toten = p.Toten
 	reqBody.Volume = p.Volume
 	reqBody.Intonation = p.Intonation
+	reqBody.Format = p.Format
 
-	m := map[string]interface{}{}
-	m["coefont"] = p.CoeFont
-	m["text"] = p.Text
-
-	jsonned, err := json.Marshal(&m)
+	jsonned, err := json.Marshal(&reqBody)
 
 	if err != nil {
 		return nil, err
@@ -101,12 +98,9 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 	reqBody.Toten = p.Toten
 	reqBody.Volume = p.Volume
 	reqBody.Intonation = p.Intonation
+	reqBody.Format = p.Format
 
-	m := map[string]interface{}{}
-	m["coefont"] = p.CoeFont
-	m["text"] = p.Text
-
-	jsonned, err := json.Marshal(&m)
+	jsonned, err := json.Marshal(&reqBody)
 
 	if err != nil {
 		return err
