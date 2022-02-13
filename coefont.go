@@ -25,6 +25,7 @@ func NewParam() *coeFontParameter {
 	ret.Toten = 0.4
 	ret.Volume = 1.0
 	ret.Intonation = 1.0
+	ret.Format = "wav"
 
 	return &ret
 }
