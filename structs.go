@@ -1,5 +1,10 @@
 package coefontcloud
 
+type ConefontCredential struct {
+	Accesskey    string
+	ClientSecret string
+}
+
 type coeFontParameter struct {
 	CoeFont      string
 	Text         string
@@ -24,4 +29,11 @@ type CoeFontReqestBody struct {
 	Volume     float32 `json:"volume"`     // 0 to 5. Default is 1.0.
 	Intonation float32 `json:"intonation"` // 0 to 2. Default is 1.0.
 	Format     string  `json:"format"`     // wav | mp3
+}
+
+type Dict struct {
+	Text     string `json:"text"`
+	Category string `json:"category"`
+	Yomi     string `json:"yomi"`
+	Accent   string `json:"accent"`
 }
