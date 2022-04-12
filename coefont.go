@@ -129,16 +129,14 @@ func DownloadCoeFont(p *coeFontParameter, filename string) error {
 }
 
 func sendRequest(jsonBytes []byte, date *time.Time, secret string, accesskey string) ([]byte, error) {
-	a := jsonBytes
-
-	req, err := http.NewRequest("POST", URL, bytes.NewReader(a))
+	req, err := http.NewRequest("POST", URL, bytes.NewReader(jsonBytes))
 
 	if err != nil {
 		return nil, err
 	}
 
 	mac := hmac.New(sha256.New, []byte(secret))
-	mac.Write([]byte(strconv.FormatInt(date.Unix(), 10) + string(a)))
+	mac.Write([]byte(strconv.FormatInt(date.Unix(), 10) + string(jsonBytes)))
 
 	req.Header.Set("X-Coefont-Date", strconv.FormatInt(date.Unix(), 10))
 	req.Header.Set("X-Coefont-Content", hex.EncodeToString(mac.Sum(nil)))
