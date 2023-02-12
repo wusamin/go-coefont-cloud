@@ -1,3 +1,8 @@
+# NOTICE
+
+Coefont API is now only avalable in the Enterprise Plan.
+the Enterprise Plan users will probably use own code, so this repository has been archived.
+
 # go-coefont-cloud
 
 go-coefont-cloud is golang library CoeFont CLOUD.
